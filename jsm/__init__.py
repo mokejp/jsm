@@ -142,6 +142,6 @@ class QuotesCsv(object):
         """株データをCSV形式に変換"""
         return [price.date.strftime('%Y-%m-%d'),
                 price.open, price.high, price.low, 
-                price.close, price.volume]
+                price.close, price.volume, price._adj_close]
 
 
