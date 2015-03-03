@@ -43,10 +43,10 @@ class SearchParser(object):
             # 全件数
             max_page = self._text(elm)
             if max_page:
-                self._max_page = int(math.ceil(int(max_page) / 50.0))
+                self._max_page = int(math.ceil(int(max_page) / 15.0))
             # データ
-            elm = soup.find("div", {'class': 'boardFinList fsize13px s130 marB10'})
-            self._elms = elm.findAll('tr')
+            elm = soup.find("div", {'id': 'sr'})
+            self._elms = elm.findAll('div', {'class': 'searchresults clearFix'})
             self._detail = False
         else:
             elm = soup.find('div', {'class': 'selectFinTitle yjL'})
@@ -87,15 +87,15 @@ class SearchParser(object):
                                                 ''))
         else:
             for elm in self._elms:
-                tds = elm.findAll('td')
-                if tds:
-                    market = self._market(tds[1])
-                    if market:
-                        res = BrandData(self._text(tds[0]), 
-                                        market,
-                                        self._text(tds[2]),
-                                        '')
-                        result_set.append(res)
+                name = elm.find('span', {'class': 'name'}).get_text()
+                code = elm.find('span', {'class': 'code'}).get_text()[1:-1]
+                market = elm.find('span', {'class': 'market'}).get_text()[2:]
+                info = elm.find('li', {'class': 'yjMSt greyFin'}).get_text()[4:]
+                res = BrandData(code,
+                                market,
+                                name,
+                                info)
+                result_set.append(res)
         return result_set
     
     def _market(self, soup):
@@ -112,8 +112,6 @@ class Search(object):
     """銘柄検索
     """
     def get(self, terms):
-        # まともに動いていないみたいなので一旦無効化
-        return []
-        #p = SearchParser()
-        #p.fetch_all(terms)
-        #return p.get()
+        p = SearchParser()
+        p.fetch_all(terms)
+        return p.get()
