@@ -31,7 +31,7 @@ class SearchParser(object):
         terms: 検索ワード
         page: ページ
         """
-        terms = quote_plus(terms)
+        terms = quote_plus(str(terms))
         siteurl = self.SITE_URL % {'terms':terms, 'page':page}
         fp = urlopen(siteurl)
         html = fp.read()
@@ -49,12 +49,12 @@ class SearchParser(object):
             self._elms = elm.findAll('div', {'class': 'searchresults clearFix'})
             self._detail = False
         else:
-            elm = soup.find('div', {'class': 'selectFinTitle yjL'})
+            elm = soup.find('div', {'id': 'main'})
             if elm:
                 self._elms = [elm]
                 self._max_page = 0
                 self._detail = True
-        
+
     def fetch_all(self, terms, page=1):
         """検索結果を全部取得
         """
@@ -73,18 +73,16 @@ class SearchParser(object):
             return result_set
         if self._detail:
             elm = self._elms[0]
-            h1 = elm.find('h1')
-            if h1:
-                strong = h1.find('strong')
-                span = strong.find('span')
-                if span:
-                    span.extract()
-                m = re.search(u'【(\d+)】(.*)', strong.text)
-                if m:
-                    result_set.append(BrandData(m.group(1).encode('utf-8'),
-                                                '', 
-                                                m.group(2).encode('utf-8').strip(), 
-                                                ''))
+            if elm.find('div', {'class': 'stockMainTab clearFix'}):
+                name = elm.find('h1').get_text()
+                code = elm.find('dl', {'class': 'stocksInfo clearFix'}).find('dt').get_text()
+                market = elm.find('span', {'class': 'stockMainTabName'}).get_text()
+                info = ''
+                res = BrandData(code,
+                                market,
+                                name,
+                                info)
+                result_set.append(res)
         else:
             for elm in self._elms:
                 name = elm.find('span', {'class': 'name'}).get_text()
