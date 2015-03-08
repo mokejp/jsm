@@ -8,6 +8,7 @@ try:
     from urllib.parse import quote_plus
 except ImportError:
     # For Python2
+    from urllib import quote_plus
     from urllib2 import urlopen
 import math
 import time
