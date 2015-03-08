@@ -159,10 +159,16 @@ BrandData::
 Changelog
 =========
 
+0.16 (2015-03-08)
+-----------------
+
+- #18 Fixed search
+
 0.15 (2015-03-08)
 -----------------
 
 - #17 Added price._adj_close to function _price_to_csv
+- #19 Add TravisCI configuration
 
 0.14 (2014-11-13)
 -----------------
