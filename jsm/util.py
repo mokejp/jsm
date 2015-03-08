@@ -22,8 +22,6 @@ def debuglog(val):
     logging.debug(val)
     
 def to_utf8(val):
-    if type(val) is bytes:
-        return val.encode("utf-8")
     try:
         if type(val) is unicode:
             return val.encode("utf-8")

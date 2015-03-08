@@ -8,6 +8,7 @@ try:
     from urllib.parse import quote_plus
 except ImportError:
     # For Python2
+    from urllib import quote_plus
     from urllib2 import urlopen
 import math
 import time
@@ -31,7 +32,7 @@ class SearchParser(object):
         terms: 検索ワード
         page: ページ
         """
-        terms = quote_plus(terms)
+        terms = quote_plus(str(terms))
         siteurl = self.SITE_URL % {'terms':terms, 'page':page}
         fp = urlopen(siteurl)
         html = fp.read()
@@ -43,18 +44,18 @@ class SearchParser(object):
             # 全件数
             max_page = self._text(elm)
             if max_page:
-                self._max_page = int(math.ceil(int(max_page) / 50.0))
+                self._max_page = int(math.ceil(int(max_page) / 15.0))
             # データ
-            elm = soup.find("div", {'class': 'boardFinList fsize13px s130 marB10'})
-            self._elms = elm.findAll('tr')
+            elm = soup.find("div", {'id': 'sr'})
+            self._elms = elm.findAll('div', {'class': 'searchresults clearFix'})
             self._detail = False
         else:
-            elm = soup.find('div', {'class': 'selectFinTitle yjL'})
+            elm = soup.find('div', {'id': 'main'})
             if elm:
                 self._elms = [elm]
                 self._max_page = 0
                 self._detail = True
-        
+
     def fetch_all(self, terms, page=1):
         """検索結果を全部取得
         """
@@ -73,29 +74,27 @@ class SearchParser(object):
             return result_set
         if self._detail:
             elm = self._elms[0]
-            h1 = elm.find('h1')
-            if h1:
-                strong = h1.find('strong')
-                span = strong.find('span')
-                if span:
-                    span.extract()
-                m = re.search(u'【(\d+)】(.*)', strong.text)
-                if m:
-                    result_set.append(BrandData(m.group(1).encode('utf-8'),
-                                                '', 
-                                                m.group(2).encode('utf-8').strip(), 
-                                                ''))
+            if elm.find('div', {'class': 'stockMainTab clearFix'}):
+                name = elm.find('h1').get_text()
+                code = elm.find('dl', {'class': 'stocksInfo clearFix'}).find('dt').get_text()
+                market = elm.find('span', {'class': 'stockMainTabName'}).get_text()
+                info = ''
+                res = BrandData(code,
+                                market,
+                                name,
+                                info)
+                result_set.append(res)
         else:
             for elm in self._elms:
-                tds = elm.findAll('td')
-                if tds:
-                    market = self._market(tds[1])
-                    if market:
-                        res = BrandData(self._text(tds[0]), 
-                                        market,
-                                        self._text(tds[2]),
-                                        '')
-                        result_set.append(res)
+                name = elm.find('span', {'class': 'name'}).get_text()
+                code = elm.find('span', {'class': 'code'}).get_text()[1:-1]
+                market = elm.find('span', {'class': 'market'}).get_text()[2:]
+                info = elm.find('li', {'class': 'yjMSt greyFin'}).get_text()[4:]
+                res = BrandData(code,
+                                market,
+                                name,
+                                info)
+                result_set.append(res)
         return result_set
     
     def _market(self, soup):
@@ -112,8 +111,6 @@ class Search(object):
     """銘柄検索
     """
     def get(self, terms):
-        # まともに動いていないみたいなので一旦無効化
-        return []
-        #p = SearchParser()
-        #p.fetch_all(terms)
-        #return p.get()
+        p = SearchParser()
+        p.fetch_all(terms)
+        return p.get()
