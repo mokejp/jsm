@@ -159,6 +159,11 @@ BrandData::
 Changelog
 =========
 
+0.15 (2015-03-08)
+-----------------
+
+- #17 Added price._adj_close to function _price_to_csv
+
 0.14 (2014-11-13)
 -----------------
 
