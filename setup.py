@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 VERSION = "0.16"
 
 README = os.path.join(os.path.dirname(__file__),'PKG-INFO')
-long_description = open(README).read() + "\n"
+long_description = open(README, "r").read() + "\n"
 
 setup(name='jsm',
       version=VERSION,
