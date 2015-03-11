@@ -2,14 +2,8 @@
 #---------------------------------------------------------------------------
 # Copyright 2011 utahta
 #---------------------------------------------------------------------------
-try:
-    # For Python3
-    from urllib.request import urlopen
-except ImportError:
-    # For Python2
-    from urllib2 import urlopen
 import re
-from jsm.util import html_parser, debuglog
+from jsm.util import html_parser, debuglog, create_session
 
 class FinanceData(object):
     """財務データ
@@ -41,7 +35,7 @@ class FinanceData(object):
         self.round_lot = self._int(round_lot, 1) # 単元株数
         self.years_high = self._int(years_high) # 年初来高値
         self.years_low = self._int(years_low) # 年初来安値
-    
+
     def _parse(self, val, default=0):
         m = re.search('(-|)[0-9,\.]+', val)
         if m:
@@ -66,24 +60,21 @@ class FinanceData(object):
 class FinanceParser(object):
     """財務データの情報を解析
     """
-    SITE_URL = "http://stocks.finance.yahoo.co.jp/stocks/detail/?code=%(ccode)s"
+    SITE_URL = "http://stocks.finance.yahoo.co.jp/stocks/detail"
     DATA_FIELD_NUM = 12 # データの要素数
     
     def __init__(self):
         self._elm = None
+        self._session = create_session()
     
     def fetch(self, ccode):
         """財務データを取得
         ccode: 証券コード
         """
-        siteurl = self.SITE_URL % {'ccode': ccode}
-        fp = urlopen(siteurl)
-        html = fp.read()
-        fp.close()
-        html = html.decode("utf-8", "ignore")
+        params = {"code":ccode}
+        html = self._session.get(self.SITE_URL, params=params).text
         soup = html_parser(html)
         self._elm = soup.find(lambda tag: tag.name == "div" and tag.get("class") == ["chartFinance"])
-        debuglog(siteurl)
 
     def get(self):
         if self._elm:
