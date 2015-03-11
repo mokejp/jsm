@@ -72,9 +72,11 @@ class FinanceParser(object):
         ccode: 証券コード
         """
         params = {"code":ccode}
-        html = self._session.get(self.SITE_URL, params=params).text
+        resp = self._session.get(self.SITE_URL, params=params)
+        html = resp.text
         soup = html_parser(html)
         self._elm = soup.find(lambda tag: tag.name == "div" and tag.get("class") == ["chartFinance"])
+        debuglog(resp.url)
 
     def get(self):
         if self._elm:

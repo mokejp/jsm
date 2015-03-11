@@ -101,7 +101,6 @@ class Quotes(object):
             '9050': サービス業
             None: 全業種
         """
-        brand_id = to_utf8(brand_id)
         b = Brand()
         if not brand_id:
             return b.get_all()

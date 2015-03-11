@@ -1,17 +1,12 @@
 # coding=utf-8
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Copyright 2011 utahta
 #---------------------------------------------------------------------------
-try:
-    # For Python3
-    from urllib.request import urlopen
-except ImportError:
-    # For Python2
-    from urllib2 import urlopen
+
 import time
 import sys
 
-from jsm.util import html_parser, debuglog
+from jsm.util import html_parser, debuglog, create_session
 
 
 class BrandData(object):
@@ -40,24 +35,24 @@ class BrandData(object):
 class BrandIndustryParser(object):
     """業種別銘柄データの情報を解析
     """
-    SITE_URL = "http://stocks.finance.yahoo.co.jp/stocks/qi/?ids=%(ids)s&p=%(page)s"
+    SITE_URL = "http://stocks.finance.yahoo.co.jp/stocks/qi"
     DATA_FIELD_NUM = 5  # データの要素数
 
     def __init__(self):
         self._elms = []
+        self._session = create_session()
 
     def fetch(self, ids, page):
         """銘柄データを取得
         ids: 業種別ID
         page: ページ
         """
-        siteurl = self.SITE_URL % {'ids': ids, 'page': page}
-        fp = urlopen(siteurl)
-        html = fp.read()
-        fp.close()
+        params = {'ids': ids, 'p': page}
+        resp = self._session.get(self.SITE_URL, params=params)
+        html = resp.text
         soup = html_parser(html)
         self._elms = soup.findAll("tr", attrs={"class": "yjM"})
-        debuglog(siteurl)
+        debuglog(resp.url)
 
     def get(self):
         if self._elms:
@@ -139,7 +134,7 @@ class Brand(object):
            '7200': 'その他金融業',
            '8050': '不動産業',
            '9050': 'サービス業',
-    }
+           }
 
     def get_0050(self):
         """農林・水産業"""

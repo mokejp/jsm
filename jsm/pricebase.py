@@ -38,7 +38,7 @@ class PriceData(object):
             self.volume *= rate
 
     def _datetime(self, val):
-        if type(val) == datetime.datetime:
+        if isinstance(val, datetime.datetime):
             return val
         try:
             return datetime.datetime.strptime(val, '%Y年%m月%d日')
