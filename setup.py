@@ -1,9 +1,10 @@
 import os
 from setuptools import setup, find_packages
+import codecs
 VERSION = "0.16"
 
 README = os.path.join(os.path.dirname(__file__),'PKG-INFO')
-long_description = open(README, "r", encoding="utf-8").read() + "\n"
+long_description = codecs.open(README, "r", encoding="utf-8").read() + "\n"
 
 setup(name='jsm',
       version=VERSION,
