@@ -1,44 +1,38 @@
 # coding=utf-8
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Copyright 2011 utahta
 #---------------------------------------------------------------------------
-try:
-    # For Python3
-    from urllib.request import urlopen
-    from urllib.parse import quote_plus
-except ImportError:
-    # For Python2
-    from urllib import quote_plus
-    from urllib2 import urlopen
+
 import math
 import time
-from jsm.util import html_parser
+
+from jsm.util import html_parser, create_session, debuglog
 from jsm.brand import BrandData
-import re
+
 
 class SearchParser(object):
     """銘柄検索ページパーサ"""
-    SITE_URL = "http://stocks.finance.yahoo.co.jp/stocks/search/?s=%(terms)s&p=%(page)s&ei=UTF-8"
-    DATA_FIELD_NUM = 7 # データの要素数
-    COLUMN_NUM = 50 # 1ページ辺り最大行数
+    SITE_URL = "http://info.finance.yahoo.co.jp/search"
+    DATA_FIELD_NUM = 7  # データの要素数
+    COLUMN_NUM = 50  # 1ページ辺り最大行数
 
     def __init__(self):
         self._elms = []
         self._detail = False
         self._max_page = 0
-    
+        self._session = create_session()
+
     def fetch(self, terms, page=1):
         """銘柄検索結果を取得
         terms: 検索ワード
         page: ページ
         """
-        terms = quote_plus(str(terms))
-        siteurl = self.SITE_URL % {'terms':terms, 'page':page}
-        fp = urlopen(siteurl)
-        html = fp.read()
-        fp.close()
-        soup = html_parser(html)
 
+        params = {'query': terms, 'p': page, "ei":"UTF-8"}
+        resp = self._session.get(self.SITE_URL, params=params)
+        html = resp.text
+        print(resp.url)
+        soup = html_parser(html)
         elm = soup.find('div', {'class': 'ymuiPagingTop yjSt clearFix'})
         if elm:
             # 全件数
@@ -62,12 +56,12 @@ class SearchParser(object):
         elms = []
         self.fetch(terms, page)
         elms.extend(self._elms)
-        for page in range(2, self._max_page+1):
+        for page in range(2, self._max_page + 1):
             self.fetch(terms, page)
             elms.extend(self._elms)
             time.sleep(0.5)
         self._elms = elms
-        
+
     def get(self):
         result_set = []
         if not self._elms:
@@ -96,10 +90,10 @@ class SearchParser(object):
                                 info)
                 result_set.append(res)
         return result_set
-    
+
     def _market(self, soup):
         return soup.text.encode('utf-8')
-    
+
     def _text(self, soup):
         strong = soup.find("strong")
         if strong:
@@ -107,9 +101,11 @@ class SearchParser(object):
         else:
             return ""
 
+
 class Search(object):
     """銘柄検索
     """
+
     def get(self, terms):
         p = SearchParser()
         p.fetch_all(terms)

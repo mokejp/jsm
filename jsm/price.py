@@ -1,37 +1,33 @@
 # coding=utf-8
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Copyright 2011 utahta
 #---------------------------------------------------------------------------
-try:
-    # For Python3
-    from urllib.request import urlopen
-except ImportError:
-    # For Python2
-    from urllib2 import urlopen
+
 import datetime
-from jsm.util import html_parser, debuglog
+
+from jsm.util import html_parser, debuglog, create_session
 from jsm.pricebase import PriceData
 
 
 class PriceParser(object):
     """今日の値動きデータの情報を解析
     """
-    SITE_URL = "http://stocks.finance.yahoo.co.jp/stocks/detail/?code=%(code)s"
+    SITE_URL = "http://stocks.finance.yahoo.co.jp/stocks/detail/"
 
     def __init__(self):
         self._elm = None
+        self._session = create_session()
 
     def fetch(self, code):
         """株価データを取得
         code: 証券コード
         """
-        siteurl = self.SITE_URL % {'code': code}
-        fp = urlopen(siteurl)
-        html = fp.read()
-        fp.close()
+        params = {'code': code}
+        resp = self._session.get(self.SITE_URL, params=params)
+        html = resp.text
         soup = html_parser(html)
         self._elm = soup.findAll("dd", attrs={"class": "ymuiEditLink mar0"})
-        debuglog(siteurl)
+        debuglog(resp.url)
 
     def get(self):
         if self._elm:
@@ -56,11 +52,13 @@ class PriceParser(object):
 class Price(object):
     """今日の値動きデータを取得
     """
+
     def get(self, code):
         """指定の証券コードから取得"""
         p = PriceParser()
         p.fetch(code)
         return p.get()
+
 
 if __name__ == "__main__":
     p = Price()

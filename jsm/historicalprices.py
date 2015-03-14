@@ -2,30 +2,25 @@
 #---------------------------------------------------------------------------
 # Copyright 2011 utahta
 #---------------------------------------------------------------------------
-try:
-    # For Python3
-    from urllib.request import urlopen
-except ImportError:
-    # For Python2
-    from urllib2 import urlopen
 import datetime
 import time
 import csv
 import sys
-from jsm.util import html_parser, debuglog
+from jsm.util import html_parser, debuglog, create_session
 from jsm.pricebase import PriceData
 from jsm.exceptions import CCODENotFoundException
 
 
 class HistoricalPricesParser(object):
     """過去の株価情報ページパーサ"""
-    SITE_URL = "http://info.finance.yahoo.co.jp/history/?code=%(ccode)s&sy=%(syear)s&sm=%(smon)s&sd=%(sday)s&ey=%(eyear)s&em=%(emon)s&ed=%(eday)s&tm=%(range_type)s&p=%(page)s"
+    SITE_URL = "http://info.finance.yahoo.co.jp/history/"
     DATA_FIELD_NUM = 7 # データの要素数
     INDEX_DATA_FIELD_NUM = 5 # 指数系データの要素数
     COLUMN_NUM = 50 # 1ページ辺り最大行数
 
     def __init__(self):
         self._elms = []
+        self._session = create_session()
     
     def fetch(self, start_date, end_date, ccode, range_type, page=1):
         """対象日時のYahooページを開く
@@ -35,18 +30,17 @@ class HistoricalPricesParser(object):
         range_type: 取得タイプ（デイリー, 週間, 月間）
         page: ページ(1ページ50件に調整)
         """
-        siteurl = self.SITE_URL % {'syear': start_date.year, 'smon': start_date.month, 'sday': start_date.day,
-                                   'eyear': end_date.year, 'emon': end_date.month, 'eday': end_date.day,
-                                   'page': page, 'range_type':range_type, 'ccode':ccode}
-        fp = urlopen(siteurl)
-        html = fp.read()
-        fp.close()
+        params = {'sy': start_date.year, 'sm': start_date.month, 'sd': start_date.day,
+                                   'ey': end_date.year, 'em': end_date.month, 'ed': end_date.day,
+                                   'p': page, 'tm':range_type, 'code':ccode}
+        resp = self._session.get(self.SITE_URL, params=params)
+        html = resp.text
         soup = html_parser(html)
         self._elms = soup.findAll("table", attrs={"class": "boardFin yjSt marB6"})
         if len(self._elms) == 0:
-            raise CCODENotFoundException("証券コードが見つかりません")
+            raise CCODENotFoundException("couldn't find ccode")
         self._elms = self._elms[0].findAll("tr")[1:]
-        debuglog(siteurl)
+        debuglog(resp.url)
         debuglog(len(self._elms))
         
     def get(self, idx=0):

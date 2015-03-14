@@ -1,9 +1,10 @@
 import os
 from setuptools import setup, find_packages
+import codecs
 VERSION = "0.16"
 
 README = os.path.join(os.path.dirname(__file__),'PKG-INFO')
-long_description = open(README).read() + "\n"
+long_description = codecs.open(README, "r", encoding="utf-8").read() + "\n"
 
 setup(name='jsm',
       version=VERSION,
@@ -12,6 +13,8 @@ setup(name='jsm',
       install_requires=[
         'beautifulsoup4',
         'html5lib',
+        "requests",
+        "six"
       ],
       classifiers=[
         'Development Status :: 3 - Alpha',

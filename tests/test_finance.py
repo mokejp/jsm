@@ -10,4 +10,3 @@ def test_get():
     d = q.get_finance(CCODE)
     if not d:
         raise Exception('is None')
-    
