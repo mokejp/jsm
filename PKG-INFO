@@ -159,6 +159,11 @@ BrandData::
 Changelog
 =========
 
+0.17 (2015-03-14)
+-----------------
+
+- #20 Use requests and six to absorb differences of python 2 and 3
+
 0.16 (2015-03-08)
 -----------------
 

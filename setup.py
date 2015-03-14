@@ -1,7 +1,7 @@
 import os
 from setuptools import setup, find_packages
 import codecs
-VERSION = "0.16"
+VERSION = "0.17"
 
 README = os.path.join(os.path.dirname(__file__),'PKG-INFO')
 long_description = codecs.open(README, "r", encoding="utf-8").read() + "\n"
