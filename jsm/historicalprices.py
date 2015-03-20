@@ -6,9 +6,9 @@ import datetime
 import time
 import csv
 import sys
-from jsm.util import html_parser, debuglog, create_session
-from jsm.pricebase import PriceData, FundPriceData
-from jsm.exceptions import CCODENotFoundException
+from .util import html_parser, debuglog, create_session
+from .pricebase import PriceData, FundPriceData
+from .exceptions import CCODENotFoundException
 
 
 class HistoricalPricesParser(object):

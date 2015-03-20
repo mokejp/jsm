@@ -3,7 +3,7 @@
 # Copyright 2011 utahta
 #---------------------------------------------------------------------------
 import re
-from jsm.util import html_parser, debuglog, create_session
+from .util import html_parser, debuglog, create_session
 
 class FinanceData(object):
     """財務データ

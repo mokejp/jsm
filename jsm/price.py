@@ -5,8 +5,8 @@
 
 import datetime
 
-from jsm.util import html_parser, debuglog, create_session
-from jsm.pricebase import PriceData
+from .util import html_parser, debuglog, create_session
+from .pricebase import PriceData
 
 
 class PriceParser(object):
