@@ -7,7 +7,7 @@ import time
 import csv
 import sys
 from jsm.util import html_parser, debuglog, create_session
-from jsm.pricebase import PriceData
+from jsm.pricebase import PriceData, FundPriceData
 from jsm.exceptions import CCODENotFoundException
 
 
@@ -16,6 +16,7 @@ class HistoricalPricesParser(object):
     SITE_URL = "http://info.finance.yahoo.co.jp/history/"
     DATA_FIELD_NUM = 7 # データの要素数
     INDEX_DATA_FIELD_NUM = 5 # 指数系データの要素数
+    FUND_FIELD_NUM = 3 # 投資信託データの要素数
     COLUMN_NUM = 50 # 1ページ辺り最大行数
 
     def __init__(self):
@@ -58,6 +59,10 @@ class HistoricalPricesParser(object):
             elif len(tds) == self.INDEX_DATA_FIELD_NUM:
                 data = [self._text(td) for td in tds]
                 data = PriceData(data[0], data[1], data[2], data[3], data[4], 0, data[4])
+                return data
+            elif len(tds) == self.FUND_FIELD_NUM:
+                data = [self._text(td) for td in tds]
+                data = FundPriceData(data[0], data[1], data[2])
                 return data
             else:
                 return None
