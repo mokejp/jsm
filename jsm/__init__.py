@@ -5,13 +5,13 @@
 import datetime
 import time
 import csv
-from jsm.price import Price
-from jsm.historicalprices import HistoricalPrices, HistoricalDailyPrices,\
+from .price import Price
+from .historicalprices import HistoricalPrices, HistoricalDailyPrices,\
     HistoricalWeeklyPrices, HistoricalMonthlyPrices
-from jsm.finance import Finance
-from jsm.brand import Brand
-from jsm.search import Search
-from jsm.util import to_utf8, to_unicode
+from .finance import Finance
+from .brand import Brand
+from .search import Search
+from .util import to_utf8, to_unicode
 
 # RangeType
 DAILY = 0

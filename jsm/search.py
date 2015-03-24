@@ -6,8 +6,8 @@
 import math
 import time
 
-from jsm.util import html_parser, create_session, debuglog
-from jsm.brand import BrandData
+from .util import html_parser, create_session, debuglog
+from .brand import BrandData
 
 
 class SearchParser(object):

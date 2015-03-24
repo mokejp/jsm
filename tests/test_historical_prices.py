@@ -2,7 +2,7 @@
 #---------------------------------------------------------------------------
 # Copyright 2011 utahta
 #---------------------------------------------------------------------------
-from tests import CCODE, INDEX_CODE
+from tests import CCODE, INDEX_CODE, FUND_CODE
 import jsm
 import datetime
 import time
@@ -89,5 +89,13 @@ def test_get_index_range_daily():
     start_date = datetime.date.fromtimestamp(time.time() - 604800) # 1週間前
     end_date = datetime.date.today()
     one = q.get_historical_prices(INDEX_CODE, jsm.DAILY, start_date, end_date)
+    if not one:
+        raise Exception('is None')
+
+def test_get_fund_range_daily():
+    q = jsm.Quotes()
+    start_date = datetime.date.fromtimestamp(time.time() - 604800) # 1週間前
+    end_date = datetime.date.today()
+    one = q.get_historical_prices(FUND_CODE, jsm.DAILY, start_date, end_date)
     if not one:
         raise Exception('is None')

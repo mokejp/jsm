@@ -19,3 +19,4 @@ import datetime
 #CCODE = 4689 # Yahoo!
 CCODE = 8411 # みずほ
 INDEX_CODE = 998405 # TOPIX
+FUND_CODE = "64315091" # 世界経済インデックスF

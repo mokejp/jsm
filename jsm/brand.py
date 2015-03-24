@@ -6,7 +6,7 @@
 import time
 import sys
 
-from jsm.util import html_parser, debuglog, create_session
+from .util import html_parser, debuglog, create_session
 
 
 class BrandData(object):
