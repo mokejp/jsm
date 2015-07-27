@@ -50,9 +50,9 @@ class FinanceData(object):
 
     def _numeric(self, val, default=0):
         try:
-            return self.int(val)
+            return self._int(val)
         except ValueError:
-            return self.float(val)
+            return self._float(val)
 
     def __repr__(self):
         return '<market_cap:%s shares_issued:%s dividend_yield:%.2f dividend_one:%.2f '\
