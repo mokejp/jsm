@@ -33,8 +33,8 @@ class FinanceData(object):
         self.bps = self._float(bps) # 1株純資産
         self.price_min = self._int(price_min) # 最低購入代金
         self.round_lot = self._int(round_lot, 1) # 単元株数
-        self.years_high = self._int(years_high) # 年初来高値
-        self.years_low = self._int(years_low) # 年初来安値
+        self.years_high = self._numeric(years_high) # 年初来高値
+        self.years_low = self._numeric(years_low) # 年初来安値
 
     def _parse(self, val, default=0):
         m = re.search('(-|)[0-9,\.]+', val)
@@ -47,7 +47,13 @@ class FinanceData(object):
     
     def _float(self, val, default=0.0):
         return float(self._parse(val, default))
-        
+
+    def _numeric(self, val, default=0):
+        try:
+            return self.int(val)
+        except ValueError:
+            return self.float(val)
+
     def __repr__(self):
         return '<market_cap:%s shares_issued:%s dividend_yield:%.2f dividend_one:%.2f '\
                 'per:%.2f pbr:%.2f eps:%.2f bps:%.2f ' \
