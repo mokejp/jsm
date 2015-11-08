@@ -81,8 +81,8 @@ class SearchParser(object):
         else:
             for elm in self._elms:
                 name = elm.find('span', {'class': 'name'}).get_text()
-                code = elm.find('span', {'class': 'code'}).get_text()[1:-1]
-                market = elm.find('span', {'class': 'market'}).get_text()[2:]
+                code = elm.find('em', {'class': 'code'}).get_text()[1:-1]
+                market = elm.find('em', {'class': 'market'}).get_text()[2:]
                 info = elm.find('li', {'class': 'yjMSt greyFin'}).get_text()[4:]
                 res = BrandData(code,
                                 market,
