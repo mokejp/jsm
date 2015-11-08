@@ -3,6 +3,8 @@ Overview
 
 [![Build Status](https://travis-ci.org/utahta/jsm.svg?branch=master)](https://travis-ci.org/utahta/jsm)
 [![Coverage Status](https://coveralls.io/repos/utahta/jsm/badge.svg?branch=master)](https://coveralls.io/r/utahta/jsm?branch=master)
+[![PyPI version](https://badge.fury.io/py/jsm.svg)](https://badge.fury.io/py/jsm)
+[![Downloads](https://img.shields.io/pypi/dm/jsm.svg)](https://pypi.python.org/pypi/jsm)
 
 日本の株式市場の株価・財務データを取得するツールです。
 
